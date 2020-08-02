@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="room-name">Room</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="http://192.168.60.204:3000/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <div id="v-app">
+      <h1>Room</h1>
+      <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4">
+          <h4>usuarios</h4>
+          <ul>
+            <li v-for="user of users">
+              <strong>{{user.username}}: </strong>{{user.isAdmin}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <script>
+      var app = new Vue({
+        el: '#v-app',
+        data: {
+          title: 'prueba',
+          users: [],
+          socket: {
+            connection: null,
+          },
+        },
+        methods: {},
+        created() {
+          let token = prompt('token');
+          this.socket.connection = io('http://192.168.60.204:3000/connection', {
+            query: { token },
+          });
+
+          this.socket.connection.emit('newConnectionToServer', {
+            roomId: '346d512d-df4b-4754-a9f9-f9880ed616aa',
+          });
+          this.socket.connection.on('newConnectionToClient', connection => {
+            console.log(connection);
+            // this.users = connection.room.users;
+          });
+        },
+      });
+    </script>
+  </body>
+</html>
